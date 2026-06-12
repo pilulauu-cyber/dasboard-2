@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --background: #070708;
+  --foreground: #f4f4f5;
+  
+  --card: #0f0f11;
+  --card-hover: #151518;
+  --card-border: #1f1f23;
+  
+  --text-primary: #f4f4f5;
+  --text-secondary: #9a9aae;
+  --text-muted: #5e5e6e;
+
+  /* Colores de estado requeridos */
+  --color-green: #10b981;   /* Disponible / Ganancias */
+  --color-orange: #f59e0b;  /* A liberar / Pendiente */
+  --color-red: #ef4444;     /* Retenido / Pérdidas */
+  
+  --accent-gold: #ffdb15;   /* Color temático Mercado Libre */
+  --accent-blue: #3b82f6;   /* Guadalupe */
+  --accent-purple: #8b5cf6; /* Tomás */
+  --accent-teal: #14b8a6;   /* Compartidos */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
+  --color-card-border: var(--card-border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-status-green: var(--color-green);
+  --color-status-orange: var(--color-orange);
+  --color-status-red: var(--color-red);
+  --color-accent-gold: var(--accent-gold);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-teal: var(--accent-teal);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Transición suave para botones y elementos interactivos */
+.transition-all-custom {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ocultar barra de scroll pero mantener funcionalidad */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
