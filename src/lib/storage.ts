@@ -1,8 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { kv } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
 
-const IS_KV_AVAILABLE = !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+const KV_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
+const KV_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
+
+const kvClient = (KV_URL && KV_TOKEN) ? createClient({ url: KV_URL, token: KV_TOKEN }) : null;
+const IS_KV_AVAILABLE = !!kvClient;
+
 const LOCAL_DB_PATH = path.join(process.cwd(), 'meli_db.json');
 
 // Interface para base de datos local
@@ -54,9 +59,9 @@ function writeLocalDB(data: LocalDB) {
 }
 
 export async function getTokens(): Promise<any | null> {
-  if (IS_KV_AVAILABLE) {
+  if (IS_KV_AVAILABLE && kvClient) {
     try {
-      return await kv.get('meli_tokens');
+      return await kvClient.get('meli_tokens');
     } catch (e) {
       console.error('Failed to fetch tokens from Vercel KV:', e);
     }
@@ -65,9 +70,9 @@ export async function getTokens(): Promise<any | null> {
 }
 
 export async function setTokens(tokens: any): Promise<void> {
-  if (IS_KV_AVAILABLE) {
+  if (IS_KV_AVAILABLE && kvClient) {
     try {
-      await kv.set('meli_tokens', tokens);
+      await kvClient.set('meli_tokens', tokens);
       return;
     } catch (e) {
       console.error('Failed to set tokens in Vercel KV:', e);
@@ -88,9 +93,9 @@ export interface MeliSettings {
 }
 
 export async function getSettings(): Promise<MeliSettings> {
-  if (IS_KV_AVAILABLE) {
+  if (IS_KV_AVAILABLE && kvClient) {
     try {
-      const settings = await kv.get<MeliSettings>('meli_settings');
+      const settings = await kvClient.get<MeliSettings>('meli_settings');
       return settings || { listingOwners: {} };
     } catch (e) {
       console.error('Failed to fetch settings from Vercel KV:', e);
@@ -100,9 +105,9 @@ export async function getSettings(): Promise<MeliSettings> {
 }
 
 export async function setSettings(settings: MeliSettings): Promise<void> {
-  if (IS_KV_AVAILABLE) {
+  if (IS_KV_AVAILABLE && kvClient) {
     try {
-      await kv.set('meli_settings', settings);
+      await kvClient.set('meli_settings', settings);
       return;
     } catch (e) {
       console.error('Failed to set settings in Vercel KV:', e);
@@ -123,9 +128,9 @@ export interface Expense {
 }
 
 export async function getExpenses(): Promise<Expense[]> {
-  if (IS_KV_AVAILABLE) {
+  if (IS_KV_AVAILABLE && kvClient) {
     try {
-      const expenses = await kv.get<Expense[]>('meli_expenses');
+      const expenses = await kvClient.get<Expense[]>('meli_expenses');
       return expenses || [];
     } catch (e) {
       console.error('Failed to fetch expenses from Vercel KV:', e);
@@ -135,9 +140,9 @@ export async function getExpenses(): Promise<Expense[]> {
 }
 
 export async function setExpenses(expenses: Expense[]): Promise<void> {
-  if (IS_KV_AVAILABLE) {
+  if (IS_KV_AVAILABLE && kvClient) {
     try {
-      await kv.set('meli_expenses', expenses);
+      await kvClient.set('meli_expenses', expenses);
       return;
     } catch (e) {
       console.error('Failed to set expenses in Vercel KV:', e);
